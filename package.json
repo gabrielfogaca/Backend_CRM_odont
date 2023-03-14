@@ -1,0 +1,19 @@
+{
+  "name": "backend_crm_odont",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gabrielfogaca/Backend_CRM_odont.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gabrielfogaca/Backend_CRM_odont/issues"
+  },
+  "homepage": "https://github.com/gabrielfogaca/Backend_CRM_odont#readme"
+}
