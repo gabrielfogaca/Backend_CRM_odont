@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/gabrielfogaca/Backend_CRM_odont/issues"
   },
-  "homepage": "https://github.com/gabrielfogaca/Backend_CRM_odont#readme"
+  "homepage": "https://github.com/gabrielfogaca/Backend_CRM_odont#readme",
+  "dependencies": {
+    "mysql2": "^3.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.21"
+  }
 }
