@@ -1,32 +1,36 @@
-//Incluir a dependencia MySQL
-const mysql = require('mysql2');
+const mysql = require('mysql');
 
-//Criar a conexão com o banco de dados MySQL
 const connection = mysql.createConnection({
-  host: 'gifted-loader-380716:southamerica-east1:root',
-  socketPath: 'p216654426181-so0cr2@gcp-sa-cloud-sql.iam.gserviceaccount.com',
-  user: 'root',
-  password: 'root',
-  database: 'dentista',
+  host: '[endereço_do_servidor_mysql]',
+  user: '[usuário_mysql]',
+  password: '[senha_mysql]',
+  database: '[nome_do_banco_de_dados]',
+  port: '[porta_do_servidor_mysql]',
 });
 
-// connection.connect(function (err) {
-//   console.log('conexão com o banco de dados realizada com sucesso!');
-// });
-
-connection.query('Select * from usuarios', function (err, rows, fields) {
-  if (!err) {
-    console.log('Resultado:', rows);
-  } else {
-    console.log('Erro: consulta não retornou dados!');
+connection.connect(function (err) {
+  if (err) {
+    console.error('Erro ao conectar ao banco de dados: ' + err.stack);
+    return;
   }
+
+  console.log('Conexão bem-sucedida ao banco de dados!');
 });
 
-connection.query(function (err) {
-  var sql =
-    "INSERT INTO usuarios (user_name, password) VALUES ('gabriel', 996531172)";
-  con.query(sql, function (err, result) {
-    if (err) throw err;
-    console.log('1 record inserted');
-  });
+connection.query('SELECT * FROM usuarios', function (err, results, fields) {
+  if (err) {
+    console.error('Erro ao executar consulta: ' + err.stack);
+    return;
+  }
+
+  console.log('Resultado da consulta: ', results);
+});
+
+connection.end(function (err) {
+  if (err) {
+    console.error('Erro ao fechar conexão com banco de dados: ' + err.stack);
+    return;
+  }
+
+  console.log('Conexão com banco de dados fechada.');
 });
