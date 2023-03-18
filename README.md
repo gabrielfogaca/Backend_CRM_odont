@@ -1,31 +1,24 @@
-# Backend_CRM_odont
+RODAR O PROJETO BAAIXADO instalar todas as dependencias indicada pelo package.json
 
-RODAR O PROJETO BAAIXADO
-instalar todas as dependencias indicada pelo package.json
-
-### NPM INSTALL
-
+NPM INSTALL
 Rodar o projeto
 
-### node app.js
+node app.js
+SEQUENCIA PARA CRIAR O PROJETO Criar o arquivo package
 
-SEQUENCIA PARA CRIAR O PROJETO
-Criar o arquivo package
-
-### npm init
-
+npm init
 Instalar o MySQL
 
-### npm install --save mysql2
-
+npm install --save mysql2
 Instalar a dependenciade forma global. Executar o comando atraves do prompt, e somente se nunca instalou a dependencia na maquina, apos instalar, reinicar o PC.
 
-### npm install -g nodemon
-
+npm install -g nodemon
 Instalar a dependencia como desenvolvedor para reiniciar o servidor sempre que houver alteração no codigo fonte.
 
-### npm install --save-dev nodemon
-
+npm install --save-dev nodemon
 Rodar o projeto usando o nodemon
 
-### nodemon app.js
+caso o nodemon não esteja funcionando abra o powershell como administrador e execute a linha de comando: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+O nodemon serve para cada vez que salvar as alterações, inicializar o app.js
+nodemon app.js

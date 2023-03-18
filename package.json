@@ -1,27 +1,18 @@
 {
-  "name": "backend_crm_odont",
+  "name": "backendnovo",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/gabrielfogaca/Backend_CRM_odont.git"
-  },
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/gabrielfogaca/Backend_CRM_odont/issues"
-  },
-  "homepage": "https://github.com/gabrielfogaca/Backend_CRM_odont#readme",
   "dependencies": {
-    "@google-cloud/pubsub": "^3.4.1",
-    "mysql": "^2.18.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-fileupload": "^1.4.0",
+    "express-session": "^1.17.3",
     "mysql2": "^3.2.0"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.21"
   }
 }
