@@ -1,11 +1,12 @@
-const mysql = require('mysql2');
+// const express = require('express');
+const mysql = require('mysql2/promise');
 
-const conexao = mysql.createConnection({
-  host: 'dentista.cakhynrian25.us-east-2.rds.amazonaws.com',
+const config = {
+  host: '34.122.114.73',
   user: 'root',
-  password: 'root12345',
+  password: 'root123',
   database: 'dentista',
   port: '3306',
-});
+};
 
-module.exports = { conexao };
+module.exports = { mysql, config };
