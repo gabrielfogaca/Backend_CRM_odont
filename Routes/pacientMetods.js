@@ -1,64 +1,89 @@
-const { conexao } = require('../conection');
+const { mysql, config } = require('../conection');
 
-//listar paciente
-function getAllPatients(res) {
-  conexao.query('SELECT * FROM pacientes', function (err, rows, fields) {
-    if (err) {
-      console.error('Erro ao executar consulta: ' + err.stack);
-      return;
+// Função para conectar ao banco de dados
+async function connect() {
+  const connection = await mysql.createConnection(config);
+  return connection;
+}
+
+//listar pacientes
+async function getAllPatients(req, res) {
+  const connection = await connect();
+  const [rows] = await connection.execute('SELECT * FROM pacientes');
+  connection.end();
+  res.json(rows);
+}
+
+// cadastrar pacientes
+async function registerPatients(req, res) {
+  const connection = await connect();
+  try {
+    const { user_name, password } = req.body;
+
+    // Valida se os campos user_name e password estão presentes no corpo da solicitação
+    if (!user_name || !password) {
+      return res
+        .status(400)
+        .json({ error: 'User name and password are required' });
     }
-    res.send(rows);
-  });
+
+    // Insere o novo usuário no banco de dados
+    const [result] = await connection.execute(
+      'INSERT INTO pacientes (user_name, password) VALUES (?, ?)',
+      [user_name, password],
+    );
+
+    // Retorna o ID do novo usuário inserido
+    res.json({ id: result.insertId });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 }
 
-// cadastrar paciente
-async function registerPatients(req) {
-  await conexao.query(
-    `INSERT INTO pacientes (name, endereco, cpf) VALUES ('${req.body.nome}', '${req.body.endereco}', '${req.body.cpf}')`,
-    function (err, results, fields) {
-      if (err) {
-        console.error('Erro ao executar o cadastro: ' + err.stack);
-        return;
-      }
-      console.log('Usuario inserido com sucesso!');
-    },
+//editar pacientes
+async function updatePatients(req, res) {
+  const { id } = req.params;
+  const { name, email } = req.body;
+  const connection = await connect();
+  await connection.execute(
+    'UPDATE pacientes SET name = ?, password = ? WHERE id = ?',
+    [name, email, id],
   );
+  connection.end();
+  res.json({ id, name, password });
 }
 
-//editar paciente
-function updatePatients(req) {
-  // id, nomeEditar, endEditar, cpfEditar
-  conexao.query(
-    `update pacientes set name = '${req.body.nome}', password = '${req.body.endereco}', cpf = '${req.body.cpf}' where id = ${req.body.id}`,
-    function (err, results, fields) {
-      if (err) {
-        console.error(
-          'Erro ao executar o Edição no cadastro do paciente ' + err.stack,
-        );
-        return;
-      }
-      console.log('Edição concluida com sucesso!');
-    },
-  );
+//excluir pacientes
+async function deletePatients(req, res) {
+  const { id } = req.params;
+  const connection = await connect();
+  await connection.execute('DELETE FROM pacientes WHERE id = ?', [id]);
+  connection.end();
+  res.json({ message: 'User deleted' });
 }
 
-//excluir paciente
-function deletePatients(req) {
-  conexao.query(
-    `delete from pacientes where id = ${req.body.id}`,
-    function (err, results, fields) {
-      if (err) {
-        console.error('Erro ao deletar o usuario - ' + err.stack);
-        return;
-      }
-      return 'Delete concluido com sucesso!';
-    },
+//Buscar pacientes pelo ID
+async function getPatientByID(req, res) {
+  const { id } = req.params;
+  const connection = await connect();
+  const [rows] = await connection.execute(
+    'SELECT * FROM pacientes WHERE id = ?',
+    [id],
   );
+  connection.end();
+  if (rows.length) {
+    res.json(rows[0]);
+  } else {
+    res.status(404).json({ message: 'User not found' });
+  }
 }
+
 pacientMetods = {
   getAllPatients,
   registerPatients,
   updatePatients,
   deletePatients,
+  getPatientByID,
 };
 module.exports = pacientMetods;

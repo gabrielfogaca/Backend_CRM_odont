@@ -7,28 +7,83 @@ async function connect() {
 }
 
 //listar usuarios
-async function getAllusers(res) {
+async function getAllusers(req, res) {
   const connection = await connect();
   const [rows] = await connection.execute('SELECT * FROM usuarios');
   connection.end();
-  console.log(rows);
-  console.log('conexão encerrada');
-  return res.json(rows);
+  res.json(rows);
 }
 
 // cadastrar usuarios
-async function registerUser(req) {}
+async function registerUser(req, res) {
+  const connection = await connect();
+  try {
+    const { user_name, password } = req.body;
+
+    // Valida se os campos user_name e password estão presentes no corpo da solicitação
+    if (!user_name || !password) {
+      return res
+        .status(400)
+        .json({ error: 'User name and password are required' });
+    }
+
+    // Insere o novo usuário no banco de dados
+    const [result] = await connection.execute(
+      'INSERT INTO usuarios (user_name, password) VALUES (?, ?)',
+      [user_name, password],
+    );
+
+    // Retorna o ID do novo usuário inserido
+    res.json({ id: result.insertId });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
 
 //editar usuarios
-async function updateUser(req) {}
+async function updateUser(req, res) {
+  const { id } = req.params;
+  const { name, email } = req.body;
+  const connection = await connect();
+  await connection.execute(
+    'UPDATE usuarios SET name = ?, password = ? WHERE id = ?',
+    [name, email, id],
+  );
+  connection.end();
+  res.json({ id, name, password });
+}
 
 //excluir usuarios
-async function deleteUser(req) {}
+async function deleteUser(req, res) {
+  const { id } = req.params;
+  const connection = await connect();
+  await connection.execute('DELETE FROM usuarios WHERE id = ?', [id]);
+  connection.end();
+  res.json({ message: 'User deleted' });
+}
+
+//Buscar usuario pelo ID
+async function getUserByID(req, res) {
+  const { id } = req.params;
+  const connection = await connect();
+  const [rows] = await connection.execute(
+    'SELECT * FROM usuarios WHERE id = ?',
+    [id],
+  );
+  connection.end();
+  if (rows.length) {
+    res.json(rows[0]);
+  } else {
+    res.status(404).json({ message: 'User not found' });
+  }
+}
 
 userMetod = {
   getAllusers,
   registerUser,
   updateUser,
   deleteUser,
+  getUserByID,
 };
 module.exports = userMetod;
