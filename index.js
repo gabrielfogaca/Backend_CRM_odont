@@ -10,7 +10,7 @@ const pacientMetods = require('./Routes/pacientMetods');
 const consultMetods = require('./Routes/consultMetods');
 const { request } = require('http');
 
-const port = 5000;
+const port = process.env.PORT || 5000;
 
 app.use(session({ secret: 'eB:4U:AHl~H6Zq]AI7=Z&-U=??$DU[l0`P/' }));
 app.use(express.json());
@@ -109,6 +109,6 @@ app.delete('/consults/:id', async (req, res) => {
 });
 
 // Inicia o servidor
-app.listen(5000, () => {
+app.listen(port, () => {
   console.log('Server running on port 5000');
 });
