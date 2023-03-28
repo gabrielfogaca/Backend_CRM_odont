@@ -18,19 +18,28 @@ async function getAllPatients(req, res) {
 async function registerPatients(req, res) {
   const connection = await connect();
   try {
-    const { user_name, password } = req.body;
+    const { nome, endereco, cpf, telefone, email, data_nascimento, cep } =
+      req.body;
 
-    // Valida se os campos user_name e password estão presentes no corpo da solicitação
-    if (!user_name || !password) {
+    // Valida se os campos estão presentes no corpo da solicitação
+    if (
+      !nome ||
+      !endereco ||
+      !cpf ||
+      !telefone ||
+      !email ||
+      !data_nascimento ||
+      !cep
+    ) {
       return res
         .status(400)
-        .json({ error: 'User name and password are required' });
+        .json({ error: 'Algum dos dados não foi preenchido corretamente' });
     }
 
-    // Insere o novo usuário no banco de dados
+    // Insere o novo paciente no banco de dados
     const [result] = await connection.execute(
-      'INSERT INTO pacientes (user_name, password) VALUES (?, ?)',
-      [user_name, password],
+      'INSERT INTO pacientes (nome, endereco, cpf, telefone, email, data_nascimento, cep) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [nome, endereco, cpf, telefone, email, data_nascimento, cep],
     );
 
     // Retorna o ID do novo usuário inserido
@@ -44,14 +53,17 @@ async function registerPatients(req, res) {
 //editar pacientes
 async function updatePatients(req, res) {
   const { id } = req.params;
-  const { name, email } = req.body;
+  const { nome, endereco, cpf, telefone, email, data_nascimento, cep } =
+    req.body;
+  console.log(req.body);
+  console.log(req.params);
   const connection = await connect();
   await connection.execute(
-    'UPDATE pacientes SET name = ?, password = ? WHERE id = ?',
-    [name, email, id],
+    'UPDATE pacientes SET nome = ?, endereco = ?, cpf = ?, telefone = ?, email = ?, data_nascimento = ?, cep = ? WHERE id = ?',
+    [nome, endereco, cpf, telefone, email, data_nascimento, cep, id],
   );
   connection.end();
-  res.json({ id, name, password });
+  res.json({ id, nome, endereco, cpf, telefone, email, data_nascimento, cep });
 }
 
 //excluir pacientes
@@ -60,7 +72,7 @@ async function deletePatients(req, res) {
   const connection = await connect();
   await connection.execute('DELETE FROM pacientes WHERE id = ?', [id]);
   connection.end();
-  res.json({ message: 'User deleted' });
+  res.json({ message: 'Paciente deletedo' });
 }
 
 //Buscar pacientes pelo ID
@@ -75,7 +87,7 @@ async function getPatientByID(req, res) {
   if (rows.length) {
     res.json(rows[0]);
   } else {
-    res.status(404).json({ message: 'User not found' });
+    res.status(404).json({ message: 'Paciente não encontrado!' });
   }
 }
 

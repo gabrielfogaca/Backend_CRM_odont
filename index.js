@@ -63,22 +63,22 @@ app.get('/patients', async (req, res) => {
 });
 
 // Rota para criar um novo pacientes
-app.post('/patient', async (req, res) => {
+app.post('/patients', async (req, res) => {
   await pacientMetods.registerPatients(req, res);
 });
 
 // Rota para recuperar um pacientes pelo ID
-app.get('/patient/:id', async (req, res) => {
+app.get('/patients/:id', async (req, res) => {
   await pacientMetods.getPatientByID(req, res);
 });
 
 // Rota para atualizar um pacientes pelo ID
-app.put('/patient/:id', async (req, res) => {
+app.put('/patients/:id', async (req, res) => {
   await pacientMetods.updatePatients(req, res);
 });
 
 // Rota para excluir um pacientes pelo ID
-app.delete('/patient/:id', async (req, res) => {
+app.delete('/patients/:id', async (req, res) => {
   await pacientMetods.deletePatients(req, res);
 });
 
