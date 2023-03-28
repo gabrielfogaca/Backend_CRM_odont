@@ -7,6 +7,7 @@ const app = express();
 var path = require('path');
 const userMetod = require('./Routes/userMetods');
 const pacientMetods = require('./Routes/pacientMetods');
+const consultMetods = require('./Routes/consultMetods');
 const { request } = require('http');
 
 const port = 5000;
@@ -80,6 +81,31 @@ app.put('/patients/:id', async (req, res) => {
 // Rota para excluir um pacientes pelo ID
 app.delete('/patients/:id', async (req, res) => {
   await pacientMetods.deletePatients(req, res);
+});
+
+// Rota para listar todos os pacientes
+app.get('/consults', async (req, res) => {
+  await consultMetods.getAllConsults(req, res);
+});
+
+// Rota para criar um novo pacientes
+app.post('/consults', async (req, res) => {
+  await consultMetods.registerConsults(req, res);
+});
+
+// Rota para recuperar um pacientes pelo ID
+app.get('/consults/:id', async (req, res) => {
+  await consultMetods.getConsultByID(req, res);
+});
+
+// Rota para atualizar um pacientes pelo ID
+app.put('/consults/:id', async (req, res) => {
+  await consultMetods.updateConsults(req, res);
+});
+
+// Rota para excluir um pacientes pelo ID
+app.delete('/consults/:id', async (req, res) => {
+  await consultMetods.deleteConsults(req, res);
 });
 
 // Inicia o servidor
