@@ -12,7 +12,7 @@ const { request } = require('http');
 
 const port = process.env.PORT || 5000;
 
-app.use(session({ secret: 'eB:4U:AHl~H6Zq]AI7=Z&-U=??$DU[l0`P/' }));
+// app.use(session({ secret: 'eB:4U:AHl~H6Zq]AI7=Z&-U=??$DU[l0`P/' }));
 app.use(express.json());
 app.use(
   fileupload({
