@@ -9,9 +9,13 @@ async function connect() {
 //listar pacientes
 async function getAllPatients(req, res) {
   const connection = await connect();
-  const [rows] = await connection.execute('SELECT * FROM pacientes');
+  const [pacientes] = await connection.execute('SELECT * FROM pacientes');
+
+  console.log(pacientes[0]);
+
   connection.end();
-  res.json(rows);
+
+  res.json(pacientes);
 }
 
 // cadastrar pacientes
@@ -91,11 +95,39 @@ async function getPatientByID(req, res) {
   }
 }
 
+//Buscar tudo do pacientes pelo ID
+async function getEverythingFromPatientByID(req, res) {
+  const { id } = req.params;
+  const connection = await connect();
+  const [pacientes] = await connection.execute(
+    'SELECT * FROM pacientes WHERE id = ?',
+    [id],
+  );
+  const [consultas] = await connection.execute(
+    'SELECT * FROM consultas where pacientes_id = ?',
+    [id],
+  );
+  const [enderecos] = await connection.execute(
+    'SELECT * FROM enderecos where pacientes_id = ?',
+    [id],
+  );
+  pacientes[0]['addresses'] = enderecos;
+  pacientes[0]['appointments'] = consultas;
+
+  connection.end();
+  if (pacientes.length) {
+    res.json(pacientes);
+  } else {
+    res.status(404).json({ message: 'Paciente não encontrado!' });
+  }
+}
+
 pacientMetods = {
   getAllPatients,
   registerPatients,
   updatePatients,
   deletePatients,
   getPatientByID,
+  getEverythingFromPatientByID,
 };
 module.exports = pacientMetods;
