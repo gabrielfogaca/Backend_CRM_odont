@@ -18,10 +18,10 @@ async function getAllConsults(req, res) {
 async function registerConsults(req, res) {
   const connection = await connect();
   try {
-    const { nome, data } = req.body;
+    const { date, time, situation, patientId } = req.body;
 
     // Valida se os campos estão presentes no corpo da solicitação
-    if (!nome || !data) {
+    if (!date || !time || !situation || !patientId) {
       return res
         .status(400)
         .json({ error: 'Algum dos dados não foi preenchido corretamente' });
@@ -30,7 +30,7 @@ async function registerConsults(req, res) {
     // Insere o novo paciente no banco de dados
     const [result] = await connection.execute(
       'INSERT INTO consultas (nome,data) VALUES (?, ?)',
-      [nome, data],
+      [date, time, situation, patientId],
     );
 
     // Retorna o ID do novo usuário inserido
@@ -41,26 +41,30 @@ async function registerConsults(req, res) {
   }
 }
 
+//appointmentId,date,time,situation,patientId
+
 //editar consultas
 async function updateConsults(req, res) {
   const { id } = req.params;
-  const { nome, data } = req.body;
+  const { date, time, situation, patientId } = req.body;
   console.log(req.body);
   console.log(req.params);
   const connection = await connect();
   await connection.execute(
-    'UPDATE consultas SET nome = ?, endereco = ?, cpf = ?, telefone = ?, email = ?, data_nascimento = ?, cep = ? WHERE id = ?',
-    [nome, data, id],
+    'UPDATE consultas SET date = ?, time = ?, situation = ?, patientId = ? WHERE appointmentId = ?',
+    [date, time, situation, patientId],
   );
   connection.end();
-  res.json({ id, nome, data });
+  res.json({ appointmentId, date, time, situation, patientId });
 }
 
 //excluir consultas
 async function deleteConsults(req, res) {
   const { id } = req.params;
   const connection = await connect();
-  await connection.execute('DELETE FROM consultas WHERE id = ?', [id]);
+  await connection.execute('DELETE FROM consultas WHERE appointmentId = ?', [
+    id,
+  ]);
   connection.end();
   res.json({ message: 'Consulta deleteda' });
 }
@@ -70,7 +74,7 @@ async function getConsultByID(req, res) {
   const { id } = req.params;
   const connection = await connect();
   const [rows] = await connection.execute(
-    'SELECT * FROM consultas WHERE id = ?',
+    'SELECT * FROM consultas WHERE appointmentId = ?',
     [id],
   );
   connection.end();

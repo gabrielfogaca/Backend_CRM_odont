@@ -10,11 +10,7 @@ async function connect() {
 async function getAllPatients(req, res) {
   const connection = await connect();
   const [pacientes] = await connection.execute('SELECT * FROM pacientes');
-
-  console.log(pacientes[0]);
-
   connection.end();
-
   res.json(pacientes);
 }
 
@@ -22,19 +18,10 @@ async function getAllPatients(req, res) {
 async function registerPatients(req, res) {
   const connection = await connect();
   try {
-    const { nome, endereco, cpf, telefone, email, data_nascimento, cep } =
-      req.body;
+    const { name, phone, email, cpf, birthdate } = req.body;
 
     // Valida se os campos estão presentes no corpo da solicitação
-    if (
-      !nome ||
-      !endereco ||
-      !cpf ||
-      !telefone ||
-      !email ||
-      !data_nascimento ||
-      !cep
-    ) {
+    if (!name || !phone || !email || !cpf || !birthdate) {
       return res
         .status(400)
         .json({ error: 'Algum dos dados não foi preenchido corretamente' });
@@ -42,8 +29,8 @@ async function registerPatients(req, res) {
 
     // Insere o novo paciente no banco de dados
     const [result] = await connection.execute(
-      'INSERT INTO pacientes (nome, endereco, cpf, telefone, email, data_nascimento, cep) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [nome, endereco, cpf, telefone, email, data_nascimento, cep],
+      'INSERT INTO pacientes (name, phone, email, cpf, birthdate) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [name, phone, email, cpf, birthdate],
     );
 
     // Retorna o ID do novo usuário inserido
@@ -56,25 +43,29 @@ async function registerPatients(req, res) {
 
 //editar pacientes
 async function updatePatients(req, res) {
-  const { id } = req.params;
-  const { nome, endereco, cpf, telefone, email, data_nascimento, cep } =
-    req.body;
-  console.log(req.body);
-  console.log(req.params);
+  const { patientId } = req.params;
+  const { name, phone, email, cpf, birthdate } = req.body;
   const connection = await connect();
   await connection.execute(
-    'UPDATE pacientes SET nome = ?, endereco = ?, cpf = ?, telefone = ?, email = ?, data_nascimento = ?, cep = ? WHERE id = ?',
-    [nome, endereco, cpf, telefone, email, data_nascimento, cep, id],
+    'UPDATE pacientes SET name = ?, phone = ?, email = ?, cpf = ?, birthdate = ? WHERE patientId = ?',
+    [name, phone, email, cpf, birthdate, addresses, patientId],
   );
   connection.end();
-  res.json({ id, nome, endereco, cpf, telefone, email, data_nascimento, cep });
+  res.json({
+    patientId,
+    name,
+    phone,
+    email,
+    cpf,
+    birthdate,
+  });
 }
 
 //excluir pacientes
 async function deletePatients(req, res) {
   const { id } = req.params;
   const connection = await connect();
-  await connection.execute('DELETE FROM pacientes WHERE id = ?', [id]);
+  await connection.execute('DELETE FROM pacientes WHERE patientId = ?', [id]);
   connection.end();
   res.json({ message: 'Paciente deletedo' });
 }
@@ -84,7 +75,7 @@ async function getPatientByID(req, res) {
   const { id } = req.params;
   const connection = await connect();
   const [rows] = await connection.execute(
-    'SELECT * FROM pacientes WHERE id = ?',
+    'SELECT * FROM pacientes WHERE patientId = ?',
     [id],
   );
   connection.end();
@@ -100,15 +91,15 @@ async function getEverythingFromPatientByID(req, res) {
   const { id } = req.params;
   const connection = await connect();
   const [pacientes] = await connection.execute(
-    'SELECT * FROM pacientes WHERE id = ?',
+    'SELECT * FROM pacientes WHERE patientId = ?',
     [id],
   );
   const [consultas] = await connection.execute(
-    'SELECT * FROM consultas where pacientes_id = ?',
+    'SELECT * FROM consultas where patientId = ?',
     [id],
   );
   const [enderecos] = await connection.execute(
-    'SELECT * FROM enderecos where pacientes_id = ?',
+    'SELECT * FROM enderecos where patientId = ?',
     [id],
   );
   pacientes[0]['addresses'] = enderecos;

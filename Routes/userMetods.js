@@ -18,10 +18,10 @@ async function getAllusers(req, res) {
 async function registerUser(req, res) {
   const connection = await connect();
   try {
-    const { user_name, password } = req.body;
+    const { user_name, password, type } = req.body;
 
     // Valida se os campos user_name e password estão presentes no corpo da solicitação
-    if (!user_name || !password) {
+    if (!user_name || !password || !type) {
       return res
         .status(400)
         .json({ error: 'User name and password are required' });
@@ -30,7 +30,7 @@ async function registerUser(req, res) {
     // Insere o novo usuário no banco de dados
     const [result] = await connection.execute(
       'INSERT INTO usuarios (user_name, password) VALUES (?, ?)',
-      [user_name, password],
+      [user_name, password, type],
     );
 
     // Retorna o ID do novo usuário inserido
@@ -44,14 +44,14 @@ async function registerUser(req, res) {
 //editar usuarios
 async function updateUser(req, res) {
   const { id } = req.params;
-  const { name, email } = req.body;
+  const { user_name, password, type } = req.body;
   const connection = await connect();
   await connection.execute(
-    'UPDATE usuarios SET name = ?, password = ? WHERE id = ?',
-    [name, email, id],
+    'UPDATE usuarios SET user_name = ?, password = ?, type = ? WHERE id = ?',
+    [user_name, password, type, id],
   );
   connection.end();
-  res.json({ id, name, password });
+  res.json({ id, user_name, password, type });
 }
 
 //excluir usuarios
