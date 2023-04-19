@@ -41,8 +41,6 @@ async function registerConsults(req, res) {
   }
 }
 
-//appointmentId,date,time,situation,patientId
-
 //editar consultas
 async function updateConsults(req, res) {
   const { id } = req.params;

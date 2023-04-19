@@ -8,7 +8,9 @@ var path = require('path');
 const userMetod = require('./Routes/userMetods');
 const pacientMetods = require('./Routes/pacientMetods');
 const consultMetods = require('./Routes/consultMetods');
+const addressesMetods = require('./Routes/addressesMetods');
 const { request } = require('http');
+const { json } = require('express');
 
 const port = process.env.PORT || 5000;
 
@@ -21,6 +23,8 @@ app.use(
   }),
 );
 app.use(cors());
+
+//############## USUARIOS ############################
 
 // Rota para listar todos os usuários
 app.get('/users', async (req, res) => {
@@ -46,6 +50,8 @@ app.put('/users/:id', async (req, res) => {
 app.delete('/users/:id', async (req, res) => {
   await userMetod.deleteUser(req, res);
 });
+
+//############## PACIENTES ############################
 
 // Rota para listar todos os pacientes
 app.get('/patients', async (req, res) => {
@@ -77,33 +83,65 @@ app.delete('/patients/:id', async (req, res) => {
   await pacientMetods.deletePatients(req, res);
 });
 
-// Rota para listar todos os pacientes
+//############## CONSULTAS ############################
+
+// Rota para listar todos as consultas
 app.get('/consults', async (req, res) => {
   await consultMetods.getAllConsults(req, res);
 });
 
-// Rota para criar um novo pacientes
+// Rota para criar uma nova consultas
 app.post('/consults', async (req, res) => {
   await consultMetods.registerConsults(req, res);
 });
 
-// Rota para recuperar um pacientes pelo ID
+// Rota para recuperar uma consulta pelo ID
 app.get('/consults/:id', async (req, res) => {
   await consultMetods.getConsultByID(req, res);
 });
 
-// Rota para atualizar um pacientes pelo ID
+// Rota para atualizar uma consultas pelo ID
 app.put('/consults/:id', async (req, res) => {
   await consultMetods.updateConsults(req, res);
 });
 
-// Rota para excluir um pacientes pelo ID
+// Rota para excluir uma consultas pelo ID
 app.delete('/consults/:id', async (req, res) => {
   await consultMetods.deleteConsults(req, res);
 });
 
-app.post('/inserirpaciente', async (req, res) => {
-  await pacientMetods.teste(req, res);
+//############## ENDEREÇOS ############################
+
+// Rota para listar todos os endereços
+app.get('/addresses', async (req, res) => {
+  await addressesMetods.getAllAddresses(req, res);
+});
+
+// Rota para criar um novo endereço
+app.post('/addresses', async (req, res) => {
+  await addressesMetods.registerAddresses(req, res);
+});
+
+// Rota para recuperar um endereço pelo ID
+app.get('/addresses/:id', async (req, res) => {
+  await addressesMetods.getAddressesByID(req, res);
+});
+
+// Rota para atualizar um endereço pelo ID
+app.put('/addresses/:id', async (req, res) => {
+  await addressesMetods.updateConsults(req, res);
+});
+
+// Rota para excluir um endereço pelo ID
+app.delete('/addresses/:id', async (req, res) => {
+  await addressesMetods.deleteConsults(req, res);
+});
+
+//cadastrar paciente com endereço
+app.post('/patientWithAddress', async (req, res) => {
+  var resposta = await pacientMetods.registerPatientsWithaddress(req, res);
+  req.body['patientId'] = resposta;
+  await addressesMetods.registerAddresses(req, res);
 });
 
 // Inicia o servidor

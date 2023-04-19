@@ -29,7 +29,7 @@ async function registerPatients(req, res) {
 
     // Insere o novo paciente no banco de dados
     const [result] = await connection.execute(
-      'INSERT INTO pacientes (name, phone, email, cpf, birthdate) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO pacientes (name, phone, email, cpf, birthdate) VALUES (?, ?, ?, ?, ?)',
       [name, phone, email, cpf, birthdate],
     );
 
@@ -113,6 +113,34 @@ async function getEverythingFromPatientByID(req, res) {
   }
 }
 
+// cadastrar pacientes
+async function registerPatientsWithaddress(req, res) {
+  const connection = await connect();
+  try {
+    const { name, phone, email, cpf, birthdate } = req.body;
+
+    // Valida se os campos estão presentes no corpo da solicitação
+    if (!name || !phone || !email || !cpf || !birthdate) {
+      return res
+        .status(400)
+        .json({ error: 'Algum dos dados não foi preenchido corretamente' });
+    }
+
+    // Insere o novo paciente no banco de dados
+    const [result] = await connection.execute(
+      'INSERT INTO pacientes (name, phone, email, cpf, birthdate) VALUES (?, ?, ?, ?, ?)',
+      [name, phone, email, cpf, birthdate],
+    );
+
+    // Retorna o ID do novo usuário inserido
+    return result.insertId;
+    res.json({ id: result.insertId });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
 pacientMetods = {
   getAllPatients,
   registerPatients,
@@ -120,5 +148,6 @@ pacientMetods = {
   deletePatients,
   getPatientByID,
   getEverythingFromPatientByID,
+  registerPatientsWithaddress,
 };
 module.exports = pacientMetods;
