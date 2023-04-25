@@ -50,10 +50,10 @@ async function updateConsults(req, res) {
   const connection = await connect();
   await connection.execute(
     'UPDATE consultas SET date = ?, time = ?, situation = ?, patientId = ? WHERE appointmentId = ?',
-    [date, time, situation, patientId],
+    [date, time, situation, id],
   );
   connection.end();
-  res.json({ appointmentId, date, time, situation, patientId });
+  res.json({ appointmentId, date, time, situation, id });
 }
 
 //excluir consultas

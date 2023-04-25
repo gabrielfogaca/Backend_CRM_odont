@@ -43,16 +43,18 @@ async function registerPatients(req, res) {
 
 //editar pacientes
 async function updatePatients(req, res) {
-  const { patientId } = req.params;
+  const { id } = req.params;
+  console.log(id);
   const { name, phone, email, cpf, birthdate } = req.body;
   const connection = await connect();
   await connection.execute(
     'UPDATE pacientes SET name = ?, phone = ?, email = ?, cpf = ?, birthdate = ? WHERE patientId = ?',
-    [name, phone, email, cpf, birthdate, addresses, patientId],
+    [name, phone, email, cpf, birthdate, id],
   );
+
   connection.end();
   res.json({
-    patientId,
+    id,
     name,
     phone,
     email,
