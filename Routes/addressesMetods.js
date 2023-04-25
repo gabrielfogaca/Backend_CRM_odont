@@ -52,16 +52,16 @@ async function registerAddresses(req, res) {
 //editar endereços
 async function updateAddresses(req, res) {
   const { id } = req.params;
-  const { street, number, district, city, state, cep, id } = req.body;
+  const { street, number, district, city, state, cep, patientId } = req.body;
   console.log(req.body);
   console.log(req.params);
   const connection = await connect();
   await connection.execute(
     'UPDATE enderecos SET street = ?, number = ?, district = ?, city = ?, state = ?, cep = ?, patientId = ?, WHERE addressId = ?',
-    [street, number, district, city, state, cep, id],
+    [street, number, district, city, state, cep, patientId, id],
   );
   connection.end();
-  res.json({ street, number, district, city, state, cep, id });
+  res.json({ id, street, number, district, city, state, cep, patientId });
 }
 
 //excluir endereços
