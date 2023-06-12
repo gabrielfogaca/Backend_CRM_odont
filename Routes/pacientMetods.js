@@ -18,7 +18,7 @@ async function getAllPatients(req, res) {
 async function registerPatients(req, res) {
   const connection = await connect();
   try {
-    const { name, phone, email, cpf, birthdate } = req.body;
+    const { name, phone, email, cpf, birthdate, observation } = req.body;
 
     // Valida se os campos estão presentes no corpo da solicitação
     if (!name || !phone || !email || !cpf || !birthdate) {
@@ -29,8 +29,8 @@ async function registerPatients(req, res) {
 
     // Insere o novo paciente no banco de dados
     const [result] = await connection.execute(
-      'INSERT INTO pacientes (name, phone, email, cpf, birthdate) VALUES (?, ?, ?, ?, ?)',
-      [name, phone, email, cpf, birthdate],
+      'INSERT INTO pacientes (name, phone, email, cpf, birthdate, observation) VALUES (?, ?, ?, ?, ?, ?)',
+      [name, phone, email, cpf, birthdate, observation],
     );
 
     // Retorna o ID do novo usuário inserido
@@ -43,12 +43,12 @@ async function registerPatients(req, res) {
 
 //editar pacientes
 async function updatePatients(req, res) {
-  const { patientId } = req.params;
-  const { name, phone, email, cpf, birthdate } = req.body;
+  // const { patientId } = req.params;
+  const { name, phone, email, cpf, birthdate, observation, patientId } = req.body;
   const connection = await connect();
   await connection.execute(
-    'UPDATE pacientes SET name = ?, phone = ?, email = ?, cpf = ?, birthdate = ? WHERE patientId = ?',
-    [name, phone, email, cpf, birthdate, addresses, patientId],
+    'UPDATE pacientes SET name = ?, phone = ?, email = ?, cpf = ?, birthdate = ?, observation = ? WHERE patientId = ?',
+    [name, phone, email, cpf, birthdate, observation, patientId],
   );
   connection.end();
   res.json({
@@ -58,6 +58,7 @@ async function updatePatients(req, res) {
     email,
     cpf,
     birthdate,
+    observation,
   });
 }
 
@@ -88,39 +89,32 @@ async function getPatientByID(req, res) {
 
 //Buscar tudo do pacientes pelo ID
 async function getEverythingFromPatientByID(req, res) {
-  const { id } = req.params;
+  const { id } = req.params
   const connection = await connect();
-  const [pacientes] = await connection.execute(
-    'SELECT * FROM pacientes WHERE patientId = ?',
-    [id],
-  );
-  const [consultas] = await connection.execute(
-    'SELECT * FROM consultas where patientId = ?',
-    [id],
-  );
-  const [enderecos] = await connection.execute(
-    'SELECT * FROM enderecos where patientId = ?',
-    [id],
-  );
-  pacientes[0]['addresses'] = enderecos;
-  pacientes[0]['appointments'] = consultas;
 
-  connection.end();
-  if (pacientes.length) {
-    res.json(pacientes);
+  const [patient] = await connection.query(`SELECT * FROM pacientes WHERE patientId = ${id}`)
+  const [patientAddresses] = await connection.query(`SELECT * FROM enderecos where patientId = ${id}`)
+  const [patientAppointments] = await connection.query(`SELECT * FROM consultas where patientId = ${id}`)
+
+  patient[0].addresses = patientAddresses
+  patient[0].appointments = patientAppointments
+
+  if (patient.length) {
+    res.json(patient[0])
   } else {
-    res.status(404).json({ message: 'Paciente não encontrado!' });
+    res.status(404).json({ message: 'Paciente não encontrado!' })
   }
 }
+
 
 // cadastrar pacientes
 async function registerPatientsWithaddress(req, res) {
   const connection = await connect();
   try {
-    const { name, phone, email, cpf, birthdate } = req.body;
+    const { cep, city, district, number, patientId, state, street } = req.body;
 
     // Valida se os campos estão presentes no corpo da solicitação
-    if (!name || !phone || !email || !cpf || !birthdate) {
+    if (!cep || !city || !district || !number || !patientId || !state || !street) {
       return res
         .status(400)
         .json({ error: 'Algum dos dados não foi preenchido corretamente' });
@@ -128,12 +122,12 @@ async function registerPatientsWithaddress(req, res) {
 
     // Insere o novo paciente no banco de dados
     const [result] = await connection.execute(
-      'INSERT INTO pacientes (name, phone, email, cpf, birthdate) VALUES (?, ?, ?, ?, ?)',
-      [name, phone, email, cpf, birthdate],
+      'INSERT INTO enderecos (cep, city, district, number, patientId, state, street) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [cep, city, district, number, patientId, state, street],
     );
 
     // Retorna o ID do novo usuário inserido
-    return result.insertId;
+    // return result.insertId;
     res.json({ id: result.insertId });
   } catch (error) {
     console.log(error);

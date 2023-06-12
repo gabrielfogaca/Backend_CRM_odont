@@ -18,23 +18,24 @@ async function getAllConsults(req, res) {
 async function registerConsults(req, res) {
   const connection = await connect();
   try {
-    const { date, time, situation, patientId } = req.body;
+    const { date, time, situation, patientId, patientName, observation } = req.body;
 
     // Valida se os campos estão presentes no corpo da solicitação
-    if (!date || !time || !situation || !patientId) {
-      return res
-        .status(400)
-        .json({ error: 'Algum dos dados não foi preenchido corretamente' });
-    }
+    // if (!date || !time || !patientId) {
+    //   return res
+    //     .status(400)
+    //     .json({ error: 'Algum dos dados não foi preenchido corretamente' });
+    // }
 
-    // Insere o novo paciente no banco de dados
+    // Insere a nova consulta no banco de dados
     const [result] = await connection.execute(
-      'INSERT INTO consultas (nome,data) VALUES (?, ?)',
-      [date, time, situation, patientId],
+      'INSERT INTO consultas (date, time, patientId, patientName, situation, observation) VALUES (?, ?, ?, ?, ?, ?)',
+      [date, time, patientId, patientName, situation, observation],
     );
 
-    // Retorna o ID do novo usuário inserido
-    res.json({ id: result.insertId });
+    // Retorna o ID da nova consulta inserida
+    return res.status(201).send()
+    // res.json({ id: result.insertId });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: 'Internal server error' });
@@ -43,17 +44,25 @@ async function registerConsults(req, res) {
 
 //editar consultas
 async function updateConsults(req, res) {
-  const { id } = req.params;
-  const { date, time, situation, patientId } = req.body;
+  // const { id } = req.params;
+  const { date, time, situation, patientId, patientName, observation, appointmentId } = req.body;
   console.log(req.body);
   console.log(req.params);
   const connection = await connect();
   await connection.execute(
-    'UPDATE consultas SET date = ?, time = ?, situation = ?, patientId = ? WHERE appointmentId = ?',
-    [date, time, situation, patientId],
+    'UPDATE consultas SET date = ?, time = ?, situation = ?, patientId = ?, patientName = ?, observation = ? WHERE appointmentId = ?',
+    [date, time, situation, patientId, patientName, observation, appointmentId],
   );
   connection.end();
-  res.json({ appointmentId, date, time, situation, patientId });
+  res.json({ 
+    appointmentId, 
+    date, 
+    time, 
+    situation, 
+    patientId, 
+    patientName, 
+    observation 
+  });
 }
 
 //excluir consultas
