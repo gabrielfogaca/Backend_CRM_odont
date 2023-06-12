@@ -92,11 +92,29 @@ async function getConsultByID(req, res) {
   }
 }
 
+// busca todas as consultas com situacao = Consultas de Emergência
+async function getEmergencyAppointments(req, res) {
+  const connection = await connect()
+  const [emeregencyAppointments] = await connection.execute('SELECT * FROM consultas WHERE situation = "Consulta de Emergência"')
+  connection.end()
+  res.json(emeregencyAppointments.length)
+}
+
+// busca todas as consultas do dia
+async function getTodayAppointments(req, res) {
+  const connection = await connect()
+  const [todayAppointments] = await connection.execute('SELECT * FROM consultas WHERE date = curdate()')
+  connection.end()
+  res.json(todayAppointments.length)
+}
+
 consultMetods = {
   getAllConsults,
   registerConsults,
   updateConsults,
   deleteConsults,
   getConsultByID,
+  getEmergencyAppointments,
+  getTodayAppointments,
 };
 module.exports = consultMetods;

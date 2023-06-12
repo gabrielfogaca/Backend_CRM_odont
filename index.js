@@ -122,6 +122,14 @@ app.delete('/consults/:id', async (req, res) => {
   await consultMetods.deleteConsults(req, res);
 });
 
+app.get('/emergencyAppointments', async (req, res) => {
+  await consultMetods.getEmergencyAppointments(req, res)
+});
+
+app.get('/todayAppointments', async (req, res) => {
+  await consultMetods.getTodayAppointments(req, res)
+});
+
 //############## ENDEREÇOS ############################
 
 // Rota para listar todos os endereços
