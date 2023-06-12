@@ -59,10 +59,10 @@ async function updateAddresses(req, res) {
   const connection = await connect();
   await connection.execute(
     'UPDATE enderecos SET street = ?, number = ?, district = ?, city = ?, state = ?, cep = ?, patientId = ?, WHERE addressId = ?',
-    [street, number, district, city, state, cep, patientId],
+    [street, number, district, city, state, cep, patientId, id],
   );
   connection.end();
-  res.json({ street, number, district, city, state, cep, patientId });
+  res.json({ id, street, number, district, city, state, cep, patientId });
 }
 
 //excluir endereços
