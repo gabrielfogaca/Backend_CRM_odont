@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require('express');
 const session = require('express-session');
 const fileupload = require('express-fileupload');
@@ -6,6 +7,7 @@ const cors = require('cors');
 const app = express();
 var path = require('path');
 const userMetod = require('./Routes/userMetods');
+const loginMethods = require('./Routes/login');
 const pacientMetods = require('./Routes/pacientMetods');
 const consultMetods = require('./Routes/consultMetods');
 const addressesMetods = require('./Routes/addressesMetods');
@@ -23,6 +25,16 @@ app.use(
   }),
 );
 app.use(cors());
+
+//############## LOGIN ############################
+
+app.post("/login", async (req, res) => {
+  await loginMethods.login(req, res)
+})
+
+app.post("/register", async (req, res) => {
+  await loginMethods.register(req, res)
+})
 
 //############## USUARIOS ############################
 
@@ -110,11 +122,19 @@ app.delete('/consults/:id', async (req, res) => {
   await consultMetods.deleteConsults(req, res);
 });
 
+app.get('/emergencyAppointments', async (req, res) => {
+  await consultMetods.getEmergencyAppointments(req, res)
+});
+
+app.get('/todayAppointments', async (req, res) => {
+  await consultMetods.getTodayAppointments(req, res)
+});
+
 //############## ENDEREÇOS ############################
 
 // Rota para listar todos os endereços
-app.get('/addresses', async (req, res) => {
-  await addressesMetods.getAllAddresses(req, res);
+app.get('/addresses/patient/:id', async (req, res) => {
+  await addressesMetods.getAllPatientAddresses(req, res);
 });
 
 // Rota para criar um novo endereço
@@ -139,9 +159,7 @@ app.delete('/addresses/:id', async (req, res) => {
 
 //cadastrar paciente com endereço
 app.post('/patientWithAddress', async (req, res) => {
-  var resposta = await pacientMetods.registerPatientsWithaddress(req, res);
-  req.body['patientId'] = resposta;
-  await addressesMetods.registerAddresses(req, res);
+  await pacientMetods.registerPatientsWithaddress(req, res);
 });
 
 // Inicia o servidor

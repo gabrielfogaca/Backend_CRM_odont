@@ -7,9 +7,10 @@ async function connect() {
 }
 
 //listar endereços
-async function getAllAddresses(req, res) {
+async function getAllPatientAddresses(req, res) {
+  const { id } = req.params;
   const connection = await connect();
-  const [rows] = await connection.execute('SELECT * FROM enderecos');
+  const [rows] = await connection.execute('SELECT * FROM enderecos WHERE patientId = ?', [id]);
   connection.end();
   res.json(rows);
 }
@@ -58,10 +59,10 @@ async function updateAddresses(req, res) {
   const connection = await connect();
   await connection.execute(
     'UPDATE enderecos SET street = ?, number = ?, district = ?, city = ?, state = ?, cep = ?, patientId = ?, WHERE addressId = ?',
-    [street, number, district, city, state, cep, patientId, id],
+    [street, number, district, city, state, cep, patientId],
   );
   connection.end();
-  res.json({ id, street, number, district, city, state, cep, patientId });
+  res.json({ street, number, district, city, state, cep, patientId });
 }
 
 //excluir endereços
@@ -78,19 +79,15 @@ async function getAddressesByID(req, res) {
   const { id } = req.params;
   const connection = await connect();
   const [rows] = await connection.execute(
-    'SELECT * FROM enderecos WHERE addressId = ?',
+    'SELECT * FROM enderecos WHERE patientId = ?',
     [id],
   );
   connection.end();
-  if (rows.length) {
-    res.json(rows[0]);
-  } else {
-    res.status(404).json({ message: 'Endereço não encontrado!' });
-  }
+  res.json(rows);
 }
 
 addressesMetods = {
-  getAllAddresses,
+  getAllPatientAddresses,
   registerAddresses,
   updateAddresses,
   deleteAddresses,
