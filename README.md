@@ -45,7 +45,9 @@ O nodemon serve para cada vez que salvar as alterações, inicializar o app.js
 
 Para rodar esse projeto, basta executar os seguintes comandos:
 
-    Primeiramente, há um arquivo chamado '.env.example'. Nele contém as váriaveis de ambiente que devem ser adicionadas no arquivo '.env', o qual deve ser criado na raiz do projeto. (OBS: pegar os valores das variáveis com os desenvolvedores do projeto)
+    Primeiramente, há um arquivo chamado '.env.example'. Nele contém as váriaveis de ambiente que devem ser 
+    adicionadas no arquivo '.env', o qual deve ser criado na raiz do projeto. 
+    (OBS: pegar os valores das variáveis com os desenvolvedores do projeto)
 
     Após criar o arquivo '.env' e colocar os seus valores, os seguintes comandos devem ser executadas:
 
