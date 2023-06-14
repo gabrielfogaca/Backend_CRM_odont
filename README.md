@@ -1,4 +1,4 @@
-Paraa rodar o projeto baixado
+<!-- Paraa rodar o projeto baixado
 instalar todas as dependencias indicada pelo package.json
 
 ### NPM INSTALL
@@ -41,4 +41,15 @@ caso o nodemon não esteja funcionando abra o powershell como administrador e ex
 
 O nodemon serve para cada vez que salvar as alterações, inicializar o app.js
 
-### nodemon app.js
+### nodemon app.js -->
+
+Para rodar esse projeto, basta executar os seguintes comandos:
+
+    Primeiramente, há um arquivo chamado '.env.example'. Nele contém as váriaveis de ambiente que devem ser adicionadas no arquivo '.env', o qual deve ser criado na raiz do projeto. (OBS: pegar os valores das variáveis com os desenvolvedores do projeto)
+
+    Após criar o arquivo '.env' e colocar os seus valores, os seguintes comandos devem ser executadas:
+
+    OBS: retirar as aspas simples (')
+
+        -> 'npm install' ou 'yarn' ----------- comando para baixar todas as dependências do projeto
+        -> 'npm start'             ----------- comando para iniciar o projeto
