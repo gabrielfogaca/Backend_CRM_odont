@@ -1,4 +1,4 @@
-# dependencies teste
+# dependencies
 **/node_modules
 **/banco
 .env
