@@ -44,7 +44,8 @@ async function registerPatients(req, res) {
 //editar pacientes
 async function updatePatients(req, res) {
   // const { patientId } = req.params;
-  const { name, phone, email, cpf, birthdate, observation, patientId } = req.body;
+  const { name, phone, email, cpf, birthdate, observation, patientId } =
+    req.body;
   const connection = await connect();
   await connection.execute(
     'UPDATE pacientes SET name = ?, phone = ?, email = ?, cpf = ?, birthdate = ?, observation = ? WHERE patientId = ?',
@@ -66,9 +67,35 @@ async function updatePatients(req, res) {
 async function deletePatients(req, res) {
   const { id } = req.params;
   const connection = await connect();
+  const [pacientes] = await connection.execute(
+    'SELECT * FROM pacientes WHERE patientId = ?',
+    [id],
+  );
+  const [consultas] = await connection.execute(
+    'SELECT * FROM consultas where patientId = ?',
+    [id],
+  );
+  const [enderecos] = await connection.execute(
+    'SELECT * FROM enderecos where patientId = ?',
+    [id],
+  );
+  pacientes[0]['addresses'] = enderecos;
+  pacientes[0]['appointments'] = consultas;
+
+  if (pacientes[0]['addresses'].length > 0) {
+    await connection.execute('DELETE FROM enderecos WHERE patientId = ?', [id]);
+  }
+  if (pacientes[0]['appointments'].length > 0) {
+    await connection.execute('DELETE FROM consultas WHERE patientId = ?', [id]);
+  }
   await connection.execute('DELETE FROM pacientes WHERE patientId = ?', [id]);
+
   connection.end();
-  res.json({ message: 'Paciente deletedo' });
+  if (pacientes.length) {
+    res.status(200).json({ message: 'Paciente deletado!' });
+  } else {
+    res.status(404).json({ message: 'Paciente não deletado deletado!' });
+  }
 }
 
 //Buscar pacientes pelo ID
@@ -89,23 +116,28 @@ async function getPatientByID(req, res) {
 
 //Buscar tudo do pacientes pelo ID
 async function getEverythingFromPatientByID(req, res) {
-  const { id } = req.params
+  const { id } = req.params;
   const connection = await connect();
 
-  const [patient] = await connection.query(`SELECT * FROM pacientes WHERE patientId = ${id}`)
-  const [patientAddresses] = await connection.query(`SELECT * FROM enderecos where patientId = ${id}`)
-  const [patientAppointments] = await connection.query(`SELECT * FROM consultas where patientId = ${id}`)
+  const [patient] = await connection.query(
+    `SELECT * FROM pacientes WHERE patientId = ${id}`,
+  );
+  const [patientAddresses] = await connection.query(
+    `SELECT * FROM enderecos where patientId = ${id}`,
+  );
+  const [patientAppointments] = await connection.query(
+    `SELECT * FROM consultas where patientId = ${id}`,
+  );
 
-  patient[0].addresses = patientAddresses
-  patient[0].appointments = patientAppointments
+  patient[0].addresses = patientAddresses;
+  patient[0].appointments = patientAppointments;
 
   if (patient.length) {
-    res.json(patient[0])
+    res.json(patient[0]);
   } else {
-    res.status(404).json({ message: 'Paciente não encontrado!' })
+    res.status(404).json({ message: 'Paciente não encontrado!' });
   }
 }
-
 
 // cadastrar pacientes
 async function registerPatientsWithaddress(req, res) {
@@ -114,7 +146,15 @@ async function registerPatientsWithaddress(req, res) {
     const { cep, city, district, number, patientId, state, street } = req.body;
 
     // Valida se os campos estão presentes no corpo da solicitação
-    if (!cep || !city || !district || !number || !patientId || !state || !street) {
+    if (
+      !cep ||
+      !city ||
+      !district ||
+      !number ||
+      !patientId ||
+      !state ||
+      !street
+    ) {
       return res
         .status(400)
         .json({ error: 'Algum dos dados não foi preenchido corretamente' });
